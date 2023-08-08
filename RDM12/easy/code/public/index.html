@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ExpressJS page</title>
+</head>
+<body>
+    <div id="mainContainer"></div>
+    <div id="inputContainer">
+        <input type="text" id="foodName">
+        <input type="text" id="calorieCount">
+        <input type="text" id="yummy">
+        <input type="button" id="addButton" value="Click me!">
+    </div>
+    <div id="listContainer"></div>
+    <script>
+        let sortedFoodItems = [];
+        addButton.onclick = () => {
+            let foodItem = {};
+            foodItem.foodName = foodName.value;
+            foodItem.calorieCount = calorieCount.value;
+            foodItem.yummy = yummy.value;
+            sortedFoodItems.push(foodItem);
+            sortedFoodItems.sort((a, b) => {
+                return b.yummy - a.yummy
+            });
+            sortedFoodItems.sort((a, b) => {
+                if (a.yummy === b.yummy) {
+                    return b.calorieCount - a.calorieCount
+                }
+                return 0
+                
+            });
+
+            let outputStr = ""
+            for(let i = 0; i < sortedFoodItems.length; i++) {
+                outputStr += `${sortedFoodItems[i].foodName}, ${sortedFoodItems[i].calorieCount} calories, ${sortedFoodItems[i].yummy} yummyness <br>`;
+            }
+            listContainer.innerHTML = outputStr;
+        }
+    </script>
+</body>
+</html>

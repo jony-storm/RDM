@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+</head>
+
+<body>
+    <input type="text" id="query">
+    <input type="button" id="calculate" value="Calculate!" />
+    <div id="result"></div>
+    <script>
+        // all the valid toekn for query stirng
+        const digit_map = {
+            "zero": 0,
+            "one": 1,
+            "two": 2,
+            "three": 3,
+            "four": 4,
+            "five": 5,
+            "six": 6,
+            "seven": 7,
+            "eight": 8,
+            "nine": 9,
+            "ten": 10,
+            "plus": "+",
+            "minus": "-",
+            "times": "*",
+
+        }
+
+        // for converting a number to text form like spell_given_num(892) -> eight hundred ninety-two
+        function spell_given_number(num) {
+            let result_arr = []
+            let zero_to_twenty = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty']
+            let twenty_to_ninety_prefix = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
+
+            function spell_hundred(num) {
+                let result = ""
+                let hundred = Math.floor(num / 100)
+                let ty = (num % 100)
+                let one_to_nine = (num % 100) % 10
+
+                if (hundred) {
+                    result += zero_to_twenty[hundred] + " hundred"
+                    if (ty) {
+                        if (ty >= 1 && ty <= 20) {
+                            result += " " + zero_to_twenty[ty]
+                        } else {
+                            result += " " + twenty_to_ninety_prefix[Math.floor(ty / 10)] + "-" + zero_to_twenty[ty % 10]
+                        }
+                    }
+                } else {
+                    if (ty >= 1 && ty <= 20) {
+                        result += zero_to_twenty[ty]
+                    } else {
+                        result += twenty_to_ninety_prefix[Math.floor(ty / 10)]
+                        if ((ty % 10) > 0) {
+                        result += "-" + zero_to_twenty[ty % 10]
+                        }
+                    }
+                }
+                return result
+            }
+
+            let spell_str = "";
+            let long_suffix = ['', 'thousand', 'million', 'billion', 'trillion'];
+            let long_suffix_indx = 0;
+            if (num > 0) {
+                while (num) {
+                    let hundred_part = num % 1000
+                    num = Math.floor(num / 1000)
+                    if (hundred_part) {
+                        spell_str = spell_hundred(hundred_part) + " " + long_suffix[long_suffix_indx] + " " + spell_str
+
+                    }
+                    long_suffix_indx += 1
+
+                }
+
+                return spell_str
+            } else {
+                return "zero"
+            }
+        }
+
+        calculate.onclick = () => {
+            // for checking if the  query string is empty
+            let exp = query.value
+            if (exp === "") {
+                result.innerText = "Please enter a valid expression.";
+                return;
+            }
+
+            try {
+                // tokenizing the expression
+                var tokens = exp.trim().split(/\s+/)
+                var num_count = 0
+                for (let tok of tokens) {
+                    if (digit_map[tok] === undefined) {
+                        result.innerText = "Invalid expression.";
+                        return;
+                    }
+                    if (typeof digit_map[tok] === "number") {
+                        num_count += 1
+                    }
+                }
+
+                // checking maximux number count not exceeding 5
+                if (num_count > 5) {
+                    result.innerText = "Invalid expression.";
+                    return;
+                }
+
+                var res = eval(tokens.map(ele => digit_map[ele]).join(" "))
+
+                if (res >= 0) {
+                    result.innerText = spell_given_number(res).trim();
+                } else {
+                    // this is a little ninja code for handling negative number
+                    // the function i made give text form of any positive number
+                    result.innerText = "minus " + spell_given_number(res * -1).trim();
+                }
+            } catch (err) {
+                result.innerText = "Invalid expression.";
+            }
+        }
+    </script>
+</body>
+
+</html>

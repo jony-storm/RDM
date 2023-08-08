@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ExpressJS page</title>
+</head>
+<body>
+    <div id="mainContainer"></div>
+    <div id="inputContainer">
+        <input type="text" id="foodName">
+        <input type="text" id="calorieCount">
+        <input type="text" id="yummy">
+        <input type="button" id="addButton" value="Add food">
+    </div>
+    <div id="foodsContainer"></div>
+    <div id="planContainer">
+        <div id="monday"></div>
+        <div id="tuesday"></div>
+        <div id="wednesday"></div>
+        <div id="thursday"></div>
+        <div id="friday"></div>
+        <div id="saturday"></div>
+        <div id="sunday"></div>
+    </div>
+    <input type="text" id="calorieReq" value="1000"> 
+    <input type="button" id="dietPlanner" value="Plan diet"> 
+    <input type="button" id="reset" value="Reset App"> 
+
+    <script>
+        let sortedFoodItems = [];
+
+        // add new food item in list
+        addButton.onclick = () => {
+            let foodItem = {};
+            foodItem.foodName = foodName.value;
+            foodItem.calorieCount = calorieCount.value;
+            foodItem.yummy = yummy.value;
+            sortedFoodItems.push(foodItem);
+            sortedFoodItems.sort((a, b) => {
+                return b.yummy - a.yummy
+            });
+            sortedFoodItems.sort((a, b) => {
+                if (a.yummy === b.yummy) {
+                    return b.calorieCount - a.calorieCount
+                }
+                return 0
+                
+            });
+
+            let outputStr = ""
+            for(let i = 0; i < sortedFoodItems.length; i++) {
+                outputStr += `${sortedFoodItems[i].foodName}, ${sortedFoodItems[i].calorieCount} calories, ${sortedFoodItems[i].yummy} yummyness <br>`;
+            }
+            foodsContainer.innerHTML = outputStr;
+        }
+
+        // diet planner
+        dietPlanner.onclick = () => {
+            let weekDay = [monday, tuesday, wednesday, thursday, friday, saturday, sunday];
+            let calReq = parseInt(calorieReq.value);
+            let total = 0;
+            let wIndx = 0
+            let i = 0;
+            while(i < sortedFoodItems.length) {
+                total += parseInt(sortedFoodItems[i].calorieCount);
+                if(total <= calReq) {
+                    weekDay[wIndx].innerHTML += `${sortedFoodItems[i].foodName}, ${sortedFoodItems[i].calorieCount} calories, ${sortedFoodItems[i].yummy} yummyness <br>`;                   
+                    i++;
+                } else {
+                    wIndx += 1;
+                    total = 0;
+                }
+            }
+        }
+
+        // resetting the diet plan
+        reset.onclick = () => {
+            foodsContainer.innerHTML = "";
+            sortedFoodItems = [];
+            monday.innerHTML = "";
+            tuesday.innerHTML = "";
+            wednesday.innerHTML = "";
+            thursday.innerHTML = "";
+            friday.innerHTML = "";
+            saturday.innerHTML = "";
+            sunday.innerHTML = "";
+        }
+    </script>
+</body>
+</html>
